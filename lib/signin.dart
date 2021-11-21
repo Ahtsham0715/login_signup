@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class SigninPage extends StatefulWidget {
@@ -13,21 +15,46 @@ class _SigninPageState extends State<SigninPage> {
   TextEditingController _username = TextEditingController();
   TextEditingController _password = TextEditingController();
 
+  Widget customtextfield(
+      label_text, controller_name, validator_func, prefix_icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+      child: TextFormField(
+        controller: controller_name,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validator_func,
+        decoration: InputDecoration(
+          isDense: true,
+          // counterText: "",
+          contentPadding: EdgeInsets.all(10.0),
+          filled: true,
+          fillColor: Colors.white,
+          label: Text(label_text),
+          prefixIcon: prefix_icon,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.3,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: FractionalOffset.topCenter,
+                end: FractionalOffset.bottomCenter,
+                // ignore: prefer_const_literals_to_create_immutables
                 colors: [
-                  Color(0xFFAD6D0C),
-                  Color(0xFFFFB342),
+                  Color(0xFFF16900),
+                  Color(0xFFF28410),
                 ],
               ),
               borderRadius: BorderRadius.only(
@@ -58,39 +85,122 @@ class _SigninPageState extends State<SigninPage> {
             ),
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: MediaQuery.of(context).size.height * 0.04,
           ),
           Form(
+            key: _formkey,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: Offset(1, 3),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          
-                        ),
-                      ),
-                    ),
+                customtextfield(
+                  'Username',
+                  _username,
+                  (_val) {
+                    if (_val!.isEmpty) {
+                      return 'Username Required';
+                    }
+                  },
+                  Icon(
+                    Icons.person,
+                  ),
+                ),
+                customtextfield(
+                  'Password',
+                  _password,
+                  (_val) {
+                    if (_val!.isEmpty) {
+                      return 'Password Required';
+                    }
+                  },
+                  Icon(
+                    Icons.lock,
                   ),
                 ),
               ],
             ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Forgot Password?',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.04,
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: FractionalOffset.centerLeft,
+                    end: FractionalOffset.centerRight,
+                    // ignore: prefer_const_literals_to_create_immutables
+                    colors: [
+                      Color(0xFFF16900),
+                      Color(0xFFF28410),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(70.0),
+                ),
+                child: MaterialButton(
+                  onPressed: () {
+                    if (_formkey.currentState!.validate()) {
+                      print('validated');
+                    }
+                  },
+                  shape: StadiumBorder(),
+                  child: Text(
+                    'SignIn',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Don't have account?",
+                style: TextStyle(
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              ),
+              TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Register',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFF16900),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -42,12 +44,13 @@ class _HomePageState extends State<HomePage> {
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFFAD6D0C),
-                Color(0xFFFFB342),
-              ],
+              begin: FractionalOffset.topCenter,
+                end: FractionalOffset.bottomCenter,                // ignore: prefer_const_literals_to_create_immutables
+                // ignore: prefer_const_literals_to_create_immutables
+                colors: [
+                  Color(0xFFF16900),
+                  Color(0xFFF28410),
+                ],
             ),
           ),
           child: Center(
