@@ -1,6 +1,7 @@
-import 'dart:ui';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:login_signup/signin.dart';
 
 void main(){
   runApp(MyApp());
@@ -26,11 +27,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+    Timer(
+        Duration(seconds: 3),
+        () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => SigninPage())));
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: InkWell(
-        onTap: () {},
-        child: Container(
+      body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
@@ -45,13 +52,12 @@ class _HomePageState extends State<HomePage> {
           ),
           child: Center(
             child: Icon(
-              Icons.sports_cricket,
-              size: 200.0,
-              color: Colors.white,
-            ),
+                Icons.sports_cricket,
+                size: 150.0,
+                color: Colors.white,
+              ),
           ),
         ),
-      ),
     );
   }
 }
