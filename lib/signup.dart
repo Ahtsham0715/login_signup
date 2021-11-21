@@ -1,25 +1,27 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:login_signup/signup.dart';
+import 'package:login_signup/signin.dart';
 
-class SigninPage extends StatefulWidget {
-  const SigninPage({Key? key}) : super(key: key);
+class SignupPage extends StatefulWidget {
+  const SignupPage({Key? key}) : super(key: key);
 
   @override
-  _SigninPageState createState() => _SigninPageState();
+  _SignupPageState createState() => _SignupPageState();
 }
 
-class _SigninPageState extends State<SigninPage> {
+class _SignupPageState extends State<SignupPage> {
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
-  TextEditingController _username = TextEditingController();
+  TextEditingController _fullname = TextEditingController();
+  TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
+  TextEditingController _confirmpassword = TextEditingController();
 
   Widget customtextfield(
       label_text, controller_name, validator_func, prefix_icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: TextFormField(
         controller: controller_name,
         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -74,7 +76,7 @@ class _SigninPageState extends State<SigninPage> {
                   bottom: MediaQuery.of(context).size.height * 0.04,
                   right: MediaQuery.of(context).size.width * 0.1,
                   child: Text(
-                    'Login',
+                    'Register',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,
@@ -86,15 +88,15 @@ class _SigninPageState extends State<SigninPage> {
             ),
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.04,
+            height: MediaQuery.of(context).size.height * 0.02,
           ),
           Form(
             key: _formkey,
             child: Column(
               children: [
                 customtextfield(
-                  'Username',
-                  _username,
+                  'Full Name',
+                  _fullname,
                   (_val) {
                     if (_val!.isEmpty) {
                       return 'Username Required';
@@ -105,45 +107,59 @@ class _SigninPageState extends State<SigninPage> {
                   ),
                 ),
                 customtextfield(
+                  'Email',
+                  _email,
+                  (_val) {
+                    if (_val!.isEmpty) {
+                      return 'Email Required';
+                    }
+                    if(
+                      !RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(_email.text)
+                    ){
+                      return 'Enter valid email';
+                    }
+                  },
+                  Icon(
+                    Icons.email,
+                  ),
+                ),
+                customtextfield(
                   'Password',
                   _password,
                   (_val) {
                     if (_val!.isEmpty) {
                       return 'Password Required';
                     }
+                    
                   },
                   Icon(
-                    Icons.lock,
+                    Icons.vpn_key,
+                  ),
+                ),
+                customtextfield(
+                  'Confirm Password',
+                  _confirmpassword,
+                  (_val) {
+                    if (_val!.isEmpty) {
+                      return 'Password Required';
+                    }
+                    if(_val != _password.text){
+                      return 'Both passwords not matched';
+                    }
+                    
+                  },
+                  Icon(
+                    Icons.vpn_key,
                   ),
                 ),
               ],
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.09,
+            height: MediaQuery.of(context).size.height * 0.04,
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
+          Padding(
+              padding: const EdgeInsets.all(10.0),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -165,7 +181,7 @@ class _SigninPageState extends State<SigninPage> {
                   },
                   shape: StadiumBorder(),
                   child: Text(
-                    'SignIn',
+                    'Register',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w600,
@@ -175,15 +191,14 @@ class _SigninPageState extends State<SigninPage> {
                 ),
               ),
             ),
-          ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.09,
+            height: MediaQuery.of(context).size.height * 0.08,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Don't have account?",
+                "Already a member?",
                 style: TextStyle(
                   fontSize: 17.0,
                   fontWeight: FontWeight.w400,
@@ -194,12 +209,12 @@ class _SigninPageState extends State<SigninPage> {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => SignupPage(),
+                        builder: (context) => SigninPage(),
                       ),
                     );
                   },
                   child: Text(
-                    'Register',
+                    'Login',
                     style: TextStyle(
                       fontSize: 17.0,
                       fontWeight: FontWeight.w700,
