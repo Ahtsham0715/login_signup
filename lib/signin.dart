@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:login_signup/signup.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
@@ -15,6 +17,8 @@ class _SigninPageState extends State<SigninPage> {
 
   TextEditingController _username = TextEditingController();
   TextEditingController _password = TextEditingController();
+
+  var db = FirebaseFirestore.instance;
 
   Widget customtextfield(
       label_text, controller_name, validator_func, prefix_icon) {
@@ -141,8 +145,7 @@ class _SigninPageState extends State<SigninPage> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.09,
           ),
-          Expanded(
-            child: Padding(
+          Padding(
               padding: const EdgeInsets.all(12.0),
               child: Container(
                 decoration: BoxDecoration(
@@ -175,7 +178,6 @@ class _SigninPageState extends State<SigninPage> {
                 ),
               ),
             ),
-          ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.09,
           ),
