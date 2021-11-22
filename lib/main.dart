@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:async';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:login_signup/signin.dart';
-// PAT = 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
-void main(){
+// PAT = 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
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
