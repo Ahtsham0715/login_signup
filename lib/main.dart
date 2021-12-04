@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:login_signup/signin.dart';
 // PAT = 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
 Future<void> main() async {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       home: HomePage(),
     );
   }

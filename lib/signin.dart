@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:login_signup/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:login_signup/user_record.dart';
+import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
@@ -15,19 +18,18 @@ class SigninPage extends StatefulWidget {
 class _SigninPageState extends State<SigninPage> {
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
-  TextEditingController _username = TextEditingController();
+  TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
 
-  var db = FirebaseFirestore.instance;
-
   Widget customtextfield(
-      label_text, controller_name, validator_func, prefix_icon) {
+      label_text, controller_name, validator_func, prefix_icon, ispassword) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
       child: TextFormField(
         controller: controller_name,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: validator_func,
+        obscureText: ispassword,
         decoration: InputDecoration(
           isDense: true,
           // counterText: "",
@@ -42,6 +44,17 @@ class _SigninPageState extends State<SigninPage> {
         ),
       ),
     );
+  }
+
+  void customsnackbar(content_widget, action_lbl, action_func) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: content_widget,
+      duration: const Duration(seconds: 1),
+      action: SnackBarAction(
+        label: action_lbl,
+        onPressed: action_func,
+      ),
+    ));
   }
 
   @override
@@ -97,16 +110,23 @@ class _SigninPageState extends State<SigninPage> {
             child: Column(
               children: [
                 customtextfield(
-                  'Username',
-                  _username,
+                  'Email',
+                  _email,
                   (_val) {
                     if (_val!.isEmpty) {
                       return 'Username Required';
+                    }
+                    if (!RegExp(
+                            r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$')
+                        .hasMatch(_email.text)) {
+                      return 'Enter valid email';
                     }
                   },
                   Icon(
                     Icons.person,
                   ),
+                  false
+
                 ),
                 customtextfield(
                   'Password',
@@ -119,6 +139,7 @@ class _SigninPageState extends State<SigninPage> {
                   Icon(
                     Icons.lock,
                   ),
+                  true
                 ),
               ],
             ),
@@ -146,38 +167,57 @@ class _SigninPageState extends State<SigninPage> {
             height: MediaQuery.of(context).size.height * 0.09,
           ),
           Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: FractionalOffset.centerLeft,
-                    end: FractionalOffset.centerRight,
-                    // ignore: prefer_const_literals_to_create_immutables
-                    colors: [
-                      Color(0xFFF16900),
-                      Color(0xFFF28410),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(70.0),
+            padding: const EdgeInsets.all(12.0),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: FractionalOffset.centerLeft,
+                  end: FractionalOffset.centerRight,
+                  // ignore: prefer_const_literals_to_create_immutables
+                  colors: [
+                    Color(0xFFF16900),
+                    Color(0xFFF28410),
+                  ],
                 ),
-                child: MaterialButton(
-                  onPressed: () {
-                    if (_formkey.currentState!.validate()) {
-                      print('validated');
+                borderRadius: BorderRadius.circular(70.0),
+              ),
+              child: MaterialButton(
+                onPressed: () async {
+                  if(_formkey.currentState!.validate()){
+                    try {
+                   UserCredential usercredentials = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: _email.text,
+                      password: _password.text,
+                    );
+                    User? username = usercredentials.user;
+
+                    Get.to(
+                      UserData(),
+                      arguments: username!.displayName,
+                    );
+                      Get.snackbar('Success', 'Logged In');
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'user-not-found') {
+                      Get.snackbar('Unknown User', 'Please enter valid email');
+                    } else if (e.code == 'wrong-password') {
+                      Get.snackbar('Wrong Password', 'Password not matched');
                     }
-                  },
-                  shape: StadiumBorder(),
-                  child: Text(
-                    'SignIn',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                  }
+                  }
+                  
+                },
+                shape: StadiumBorder(),
+                child: Text(
+                  'SignIn',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
+          ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.09,
           ),
@@ -193,22 +233,22 @@ class _SigninPageState extends State<SigninPage> {
                 ),
               ),
               TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => SignupPage(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Register',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFFF16900),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => SignupPage(),
                     ),
+                  );
+                },
+                child: Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFF16900),
                   ),
                 ),
+              ),
             ],
           ),
         ],

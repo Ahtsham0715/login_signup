@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:login_signup/signin.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -16,12 +18,9 @@ class _SignupPageState extends State<SignupPage> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   TextEditingController _fullname = TextEditingController();
-  TextEditingController _username = TextEditingController();
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
   TextEditingController _confirmpassword = TextEditingController();
-
-  var db = FirebaseFirestore.instance;
 
   Widget customtextfield(
       label_text, controller_name, validator_func, prefix_icon, IsPassword) {
@@ -46,6 +45,25 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
     );
+  }
+
+  void customsnackbar(content_widget, action_lbl) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: content_widget,
+      duration: const Duration(seconds: 1),
+      action: SnackBarAction(
+        label: action_lbl,
+        onPressed: () {},
+      ),
+    ));
+  }
+
+  Future<bool> usernameCheck(String username) async {
+    final result = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('username', isEqualTo: username)
+        .get();
+    return result.docs.isEmpty;
   }
 
   @override
@@ -110,22 +128,6 @@ class _SignupPageState extends State<SignupPage> {
                   },
                   Icon(
                     Icons.person,
-                  ),
-                  false,
-                ),
-                customtextfield(
-                  'User Name',
-                  _username,
-                  (_val) {
-                    if (_val!.isEmpty) {
-                      return 'Username Required';
-                    }
-                    // var snap = db.collection('Users').doc(documentId)
-
-                    
-                  },
-                  Icon(
-                    Icons.perm_identity,
                   ),
                   false,
                 ),
@@ -198,20 +200,26 @@ class _SignupPageState extends State<SignupPage> {
                 borderRadius: BorderRadius.circular(70.0),
               ),
               child: MaterialButton(
-                onPressed: () {
-                  if (_formkey.currentState!.validate()) {
-                    print('validated');
-                    db.collection('Users').doc(_username.text).set({
-                        'username': _fullname.text,
-                        'email': _email.text,
-                        'password': _password.text,
-                    });
-                    _fullname.clear();
-                    _username.clear();
-                    _email.clear();
-                    _password.clear();
-                    _confirmpassword.clear();
-                  }
+                onPressed: () async {
+                 try{
+                   UserCredential usercrediantials =  await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                     email: _email.text,
+                     password: _password.text,
+                   );
+
+                   User? thisuser = usercrediantials.user;
+                   thisuser!.updateDisplayName(_fullname.text);
+                   FirebaseAuth.instance.signOut();
+                     Get.snackbar('Success', 'Account Created Successfully');
+                 } on FirebaseAuthException catch(e){
+                   if(e.code == 'weak-password'){
+                     Get.snackbar('Error', 'Password is too weak');
+                   }else if (e.code == 'email-already-in-use'){
+                     Get.snackbar('Error', 'Email Already Exists');
+                   } 
+                 } catch (e){
+                     Get.snackbar('Error', '$e');
+                 }
                 },
                 shape: StadiumBorder(),
                 child: Text(
