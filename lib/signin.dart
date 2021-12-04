@@ -175,11 +175,19 @@ class _SigninPageState extends State<SigninPage> {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Container(
+
               decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 10.0,
+                    color: Color(0xFFF5B98B),
+                    spreadRadius: 1.0,
+                    offset: Offset(0.2, 3.0),
+                  ),
+                ],
                 gradient: LinearGradient(
                   begin: FractionalOffset.centerLeft,
                   end: FractionalOffset.centerRight,
-                  // ignore: prefer_const_literals_to_create_immutables
                   colors: [
                     Color(0xFFF16900),
                     Color(0xFFF28410),
