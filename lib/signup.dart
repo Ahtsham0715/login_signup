@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:login_signup/user_record.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -209,8 +210,17 @@ class _SignupPageState extends State<SignupPage> {
 
                    User? thisuser = usercrediantials.user;
                    thisuser!.updateDisplayName(_fullname.text);
-                   FirebaseAuth.instance.signOut();
+                  //  FirebaseAuth.instance.signOut();
                      Get.snackbar('Success', 'Account Created Successfully');
+                     Get.to(UserData());
+                     FirebaseAuth.instance.authStateChanges().listen((User? user) {
+                       if(user == null){
+                         Get.snackbar('user', 'User is currently Signed out');
+                       }else{
+                         Get.snackbar('user', 'User is currently Signed in');
+                         
+                       }
+                     });
                  } on FirebaseAuthException catch(e){
                    if(e.code == 'weak-password'){
                      Get.snackbar('Error', 'Password is too weak');

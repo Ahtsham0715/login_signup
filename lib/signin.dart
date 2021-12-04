@@ -60,10 +60,10 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
+      body: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -76,36 +76,42 @@ class _SigninPageState extends State<SigninPage> {
                 ],
               ),
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(70.0),
+                bottomLeft: Radius.circular(0.0),
               ),
             ),
             child: Stack(
-              alignment: Alignment.center,
+              alignment: Alignment.topCenter,
               children: [
-                Icon(
-                  Icons.sports_cricket,
-                  color: Colors.white,
-                  size: 50.0,
-                ),
                 Positioned(
-                  bottom: MediaQuery.of(context).size.height * 0.04,
-                  right: MediaQuery.of(context).size.width * 0.1,
-                  child: Text(
-                    'Login',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  top: MediaQuery.of(context).size.height * 0.1,
+                  child: Icon(
+                    Icons.sports_cricket,
+                    color: Colors.white,
+                    size: 120.0,
                   ),
                 ),
+                
               ],
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.04,
-          ),
-          Form(
+          Positioned(
+            bottom: 0.0,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.65,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+                color: Colors.white,
+              ),
+              child: ListView(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  Form(
             key: _formkey,
             child: Column(
               children: [
@@ -164,7 +170,7 @@ class _SigninPageState extends State<SigninPage> {
             ],
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.09,
+            height: MediaQuery.of(context).size.height * 0.03,
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),
@@ -193,7 +199,7 @@ class _SigninPageState extends State<SigninPage> {
 
                     Get.to(
                       UserData(),
-                      arguments: username!.displayName,
+                      // arguments: username!.displayName,
                     );
                       Get.snackbar('Success', 'Logged In');
                   } on FirebaseAuthException catch (e) {
@@ -219,7 +225,7 @@ class _SigninPageState extends State<SigninPage> {
             ),
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.09,
+            height: MediaQuery.of(context).size.height * 0.03,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -250,6 +256,10 @@ class _SigninPageState extends State<SigninPage> {
                 ),
               ),
             ],
+          ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
